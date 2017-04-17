@@ -25,6 +25,7 @@ namespace Delta.PECS.WebService.DataService {
         private Int64 SyncTimeInterval;
         private Int64 SyncMachineCodeInterval;
         private Int64 SyncLscParamInterval;
+        private Int64 MaxRepeatCount;
         private Thread workerThread;
         private static List<Thread> workerThreads;
         private static List<ClientObjectInfo> workerClients;
@@ -72,6 +73,7 @@ namespace Delta.PECS.WebService.DataService {
                 runState = EnmRunState.Start;
                 StartupDateTime = DateTime.Now;
                 UniqueID = Guid.NewGuid();
+                MaxRepeatCount = 3;
                 workerThreads = new List<Thread>();
                 workerClients = new List<ClientObjectInfo>();
                 totalLscs = new List<LscInfo>();
@@ -404,9 +406,11 @@ namespace Delta.PECS.WebService.DataService {
         /// Do Init Data
         /// </summary>
         private void DoInitData() {
+            var maxRepeat = this.MaxRepeatCount;
             while (runState < EnmRunState.Run) {
                 try {
                     if (runState == EnmRunState.Init) {
+                        maxRepeat--;
                         WriteRealTimeLog(DateTime.Now, EnmLogType.Info, "System", "数据初始化...");
                         InitRegistry();
                         totalLscs.AddRange(new BLsc().GetLscs());
@@ -422,11 +426,16 @@ namespace Delta.PECS.WebService.DataService {
                         allDone.Set();
                     }
                 } catch (Exception err) {
-                    runState = EnmRunState.Stop;
-                    WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoInitData]{0}", err.Message));
-                    WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", "数据初始化错误,服务启动失败。");
-                    allDone.Set();
-                    break;
+                    if(maxRepeat <= 0) {
+                        WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", "数据初始化错误,服务启动失败。");
+                        WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoInitData]{0}", err.Message));
+                        runState = EnmRunState.Stop;
+                        allDone.Set();
+                        break;
+                    } else {
+                        WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", "数据初始化错误,稍后将重试。");
+                        Thread.Sleep(29000);
+                    }
                 }
 
                 Thread.Sleep(1000);
@@ -2286,7 +2295,7 @@ namespace Delta.PECS.WebService.DataService {
                 WriteLog(DateTime.Now, EnmLogType.Error, "System", "同步实时告警信息失败");
             }
         }
-
+        
         /// <summary>
         /// Sync Devices
         /// </summary>

@@ -23,8 +23,12 @@ namespace Delta.PECS.WebService.SQLServerDAL
         /// <returns>Alarms</returns>
         public List<AlarmInfo> SynAlarms(int lscId, string connectionString) {
             try {
-                SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int) };
+                SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int),
+                                           new SqlParameter("@AIType", SqlDbType.Int),
+                                           new SqlParameter("@DIType", SqlDbType.Int)};
                 parms[0].Value = lscId;
+                parms[1].Value = (int)EnmNodeType.Aic;
+                parms[2].Value = (int)EnmNodeType.Dic;
 
                 List<AlarmInfo> alarms = new List<AlarmInfo>();
                 SqlHelper.TestConnection(connectionString);

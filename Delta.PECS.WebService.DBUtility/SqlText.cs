@@ -54,14 +54,14 @@ namespace Delta.PECS.WebService.DBUtility
         public const string SQL_SELECT_ALARM_SYNALARMS = @"
         ;WITH Nodes AS
         (
-	        SELECT AI.[AicID] AS [NodeID],DE.[DevID],DE.[DevDesc] FROM [dbo].[TM_AIC] AI INNER JOIN [dbo].[TM_DEV] DE ON AI.[DevID] = DE.[DevID]
+	        SELECT AI.[AicID] AS [NodeID],@AIType AS [NodeType],DE.[DevID],DE.[DevDesc] FROM [dbo].[TM_AIC] AI INNER JOIN [dbo].[TM_DEV] DE ON AI.[DevID] = DE.[DevID]
 	        UNION ALL
-	        SELECT DI.[DicID] AS [NodeID],DE.[DevID],DE.[DevDesc] FROM [dbo].[TM_DIC] DI INNER JOIN [dbo].[TM_DEV] DE ON DI.[DevID] = DE.[DevID]
+	        SELECT DI.[DicID] AS [NodeID],@DIType AS [NodeType],DE.[DevID],DE.[DevDesc] FROM [dbo].[TM_DIC] DI INNER JOIN [dbo].[TM_DEV] DE ON DI.[DevID] = DE.[DevID]
         )
         SELECT @LscID AS [LscID],AL.[SerialNO],AL.[Area1Name],AL.[Area2Name],AL.[Area3Name],AL.[Area4Name],AL.[StaName],AL.[DevName],N.[DevDesc],AL.[NodeID],AL.[NodeType],
         AL.[NodeName],AL.[AlarmID],AL.[AlarmValue],AL.[AlarmLevel],AL.[AlarmStatus],AL.[AlarmDesc],AL.[AuxAlarmDesc],AL.[StartTime],AL.[EndTime],AL.[ConfirmName],
         AL.[ConfirmMarking],AL.[ConfirmTime],AL.[AuxSet],AL.[TaskID],AL.[ProjStr] AS [ProjName],0 AS [TurnCount],GETDATE() AS [UpdateTime] FROM [dbo].[TA_Alarm] AL
-        LEFT OUTER JOIN Nodes N ON AL.[NodeID] = N.[NodeID];";
+        LEFT OUTER JOIN Nodes N ON AL.[NodeID] = N.[NodeID] AND AL.[NodeType] = N.[NodeType];";
         public const string SQL_INSERT_ALARM_ADDALARMS = @"DELETE FROM [dbo].[TA_Alarm] WHERE [LscID] = @LscID AND [SerialNO] = @SerialNO;INSERT INTO [dbo].[TA_Alarm]([LscID],[SerialNO],[Area1Name],[Area2Name],[Area3Name],[Area4Name],[StaName],[DevName],[DevDesc],[NodeID],[NodeType],[NodeName],[AlarmID],[AlarmValue],[AlarmLevel],[AlarmStatus],[AlarmDesc],[AuxAlarmDesc],[StartTime],[EndTime],[ConfirmName],[ConfirmMarking],[ConfirmTime],[AuxSet],[TaskID],[ProjName],[TurnCount],[UpdateTime]) VALUES(@LscID,@SerialNO,@Area1Name,@Area2Name,@Area3Name,@Area4Name,@StaName,@DevName,@DevDesc,@NodeID,@NodeType,@NodeName,@AlarmID,@AlarmValue,@AlarmLevel,@AlarmStatus,@AlarmDesc,@AuxAlarmDesc,@StartTime,@EndTime,@ConfirmName,@ConfirmMarking,@ConfirmTime,@AuxSet,@TaskID,@ProjName,@TurnCount,@UpdateTime);";
         public const string SQL_UPDATE_ALARM_UPDATEALARMS = @"UPDATE [dbo].[TA_Alarm] SET [Area1Name] = @Area1Name,[Area2Name] = @Area2Name,[Area3Name] = @Area3Name,[Area4Name] = @Area4Name,[StaName] = @StaName,[DevName] = @DevName,[DevDesc] = @DevDesc,[NodeID] = @NodeID,[NodeType] = @NodeType,[NodeName] = @NodeName,[AlarmID] = @AlarmID,[AlarmValue] = @AlarmValue,[AlarmLevel] = @AlarmLevel,[AlarmStatus] = @AlarmStatus,[AlarmDesc] = @AlarmDesc,[AuxAlarmDesc] = @AuxAlarmDesc,[StartTime] = @StartTime,[EndTime] = @EndTime,[ConfirmName] = @ConfirmName,[ConfirmMarking] = @ConfirmMarking,[ConfirmTime] = @ConfirmTime,[AuxSet] = @AuxSet,[TaskID] = @TaskID,[ProjName] = @ProjName,[TurnCount] = @TurnCount,[UpdateTime] = @UpdateTime WHERE [LscID] = @LscID AND [SerialNO] = @SerialNO;";
         public const string SQL_DELETE_ALARM_DELETEALARMS = @"DELETE FROM [dbo].[TA_Alarm] WHERE [LscID] = @LscID AND [SerialNO] = @SerialNO;";
