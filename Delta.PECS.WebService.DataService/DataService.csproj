@@ -107,6 +107,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Bats\Start.bat" />
+    <None Include="Bats\Stop.bat" />
     <None Include="Resources\DataServer.ico" />
   </ItemGroup>
   <ItemGroup>
