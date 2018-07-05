@@ -14,10 +14,8 @@ using Microsoft.Win32;
 using Delta.PECS.WebService.BLL;
 using Delta.PECS.WebService.Model;
 
-namespace Delta.PECS.WebService.DataServer
-{
-    public partial class MainFrm : Form
-    {
+namespace Delta.PECS.WebService.DataServer {
+    public partial class MainFrm : Form {
         /// <summary>
         /// Gloal Variables.
         /// </summary>
@@ -419,7 +417,9 @@ namespace Delta.PECS.WebService.DataServer
                     if (runState == EnmRunState.Init) {
                         maxRepeat--;
                         WriteRealTimeLog(DateTime.Now, EnmLogType.Info, "System", "数据初始化...");
-                        InitRegistry();
+
+                        //取消注册码机制
+                        //InitRegistry();
                         totalLscs.AddRange(new BLsc().GetLscs());
                         totalLscs.RemoveAll(l => !l.Enabled);
                         InitCSCSetting();
@@ -433,7 +433,7 @@ namespace Delta.PECS.WebService.DataServer
                         allDone.Set();
                     }
                 } catch (Exception err) {
-                    if(maxRepeat <= 0) {
+                    if (maxRepeat <= 0) {
                         WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", "数据初始化错误,服务启动失败。");
                         WriteRealTimeLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoInitData]{0}", err.Message));
                         runState = EnmRunState.Stop;
@@ -2032,6 +2032,7 @@ namespace Delta.PECS.WebService.DataServer
             while (runState < EnmRunState.Stop) {
                 if (runState == EnmRunState.Run) {
                     #region DoMachineCode
+                    /*
                     try {
                         if (SyncMachineCodeInterval > 0 && (mcodeCnt == -1 || mcodeCnt >= SyncMachineCodeInterval)) {
                             mcodeCnt = 0;
@@ -2077,6 +2078,7 @@ namespace Delta.PECS.WebService.DataServer
                     } catch (Exception err) {
                         WriteLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoTask-01]{0}", err.Message));
                     }
+                     * */
                     #endregion
 
                     #region DoSyncLscParam
@@ -2302,7 +2304,7 @@ namespace Delta.PECS.WebService.DataServer
                 WriteLog(DateTime.Now, EnmLogType.Error, "System", "同步实时告警信息失败");
             }
         }
-        
+
         /// <summary>
         /// Sync Devices
         /// </summary>
