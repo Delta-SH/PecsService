@@ -287,6 +287,7 @@ namespace Delta.PECS.WebService.DataServer {
                     var connectionString = ComUtility.CreateLscConnectionString(lsc);
                     settingEntity.SyncArea(lsc.LscID, connectionString);
                     settingEntity.SyncBuilding(lsc.LscID, connectionString);
+                    settingEntity.SyncNetGrid(lsc.LscID, connectionString);
                     settingEntity.SyncSta(lsc.LscID, connectionString);
                     settingEntity.SyncDev(lsc.LscID, connectionString);
                     settingEntity.SyncAI(lsc.LscID, connectionString);
@@ -2235,6 +2236,7 @@ namespace Delta.PECS.WebService.DataServer {
             var connectionString = ComUtility.CreateLscConnectionString(lsc);
             settingEntity.SyncArea(lsc.LscID, connectionString);
             settingEntity.SyncBuilding(lsc.LscID, connectionString);
+            settingEntity.SyncNetGrid(lsc.LscID, connectionString);
             settingEntity.SyncSta(lsc.LscID, connectionString);
             settingEntity.SyncDev(lsc.LscID, connectionString);
             settingEntity.SyncAI(lsc.LscID, connectionString);

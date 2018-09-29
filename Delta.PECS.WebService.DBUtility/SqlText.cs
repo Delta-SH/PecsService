@@ -19,6 +19,7 @@ namespace Delta.PECS.WebService.DBUtility
         public const string TN_TrendAlarm = "[dbo].[TA_TrendAlarm]";
         public const string TN_Area = "[dbo].[TM_AREA]";
         public const string TN_Building = "[dbo].[TM_Building]";
+        public const string TN_NetGrid = "[dbo].[TC_NetGrid]";
         public const string TN_Sta = "[dbo].[TM_STA]";
         public const string TN_Dev = "[dbo].[TM_DEV]";
         public const string TN_AI = "[dbo].[TM_AIC]";
@@ -150,6 +151,7 @@ namespace Delta.PECS.WebService.DBUtility
         //Setting SQL Text
         public const string SQL_SELECT_SETTING_SYNCAREA = @"SELECT @LscID AS [LscID],[AreaID],[LastAreaID],[AreaName],[Enabled],[NodeLevel],[MID] FROM [dbo].[TM_AREA];";
         public const string SQL_SELECT_SETTING_SYNCBUILDING = @"SELECT @LscID AS [LscID],[BuildingID],[BuildingName],[BuildingDesc] FROM [dbo].[TC_Building];";
+        public const string SQL_SELECT_SETTING_SYNCNETGRID = @"SELECT @LscID AS [LscID],[TypeID],[TypeName] FROM [dbo].[TC_NetGrid];";
         public const string SQL_SELECT_SETTING_SYNCSTA = @"SELECT @LscID AS [LscID],[StaID],[StaName],[StaDesc],[StaAddress],[LinkMan],[LinkManPhone],[StaTypeID],[LocationWay],[Longitude],[Latitude],[MapDesc],[STDStationID],[NodeFeatures],[AreaID],[DeptID],[MID],[DevCount],[StaPFACount],[NetGridID],[BuildingID],[Enabled] FROM [dbo].[TM_STA];";
         public const string SQL_SELECT_SETTING_SYNCDEV = @"SELECT @LscID AS [LscID],[DevID],[StaID],[Enabled],[DevName],[DevDesc],[DevTypeID],[ProductorID],[AlarmDevTypeID],[Version],[DevModel],[BeginRunTime],[MID],[TDevID],[InstallPosition],[ContextDevName],[Capacity] FROM [dbo].[TM_DEV];";
         public const string SQL_SELECT_SETTING_SYNCAI = @"SELECT @LscID AS [LscID],[AicID],[AicName],[AicDesc],[DevID],[Unit],[AuxSet],[AlarmIdHL1],[AlarmIdLL1],[AlarmIdHL2],[AlarmIdLL2],[AlarmIdHL3],[AlarmIdLL3],[AlarmIdHL4],[AlarmIdLL4],[AlarmID],[AlarmLevel],[RtuID],[DotID],[Enabled] FROM [dbo].[TM_AIC];";
@@ -269,6 +271,10 @@ namespace Delta.PECS.WebService.DBUtility
         public const string SQL_SELECT_CSCMODIFY_ADDBUILDING = @"DELETE FROM [dbo].[TM_Building] WHERE [LscID] = @LscID AND [BuildingID] = @BuildingID;INSERT INTO [dbo].[TM_Building]([LscID],[BuildingID],[BuildingName],[BuildingDesc]) VALUES(@LscID,@BuildingID,@BuildingName,@BuildingDesc);";
         public const string SQL_SELECT_CSCMODIFY_UPDATEBUILDING = @"UPDATE [dbo].[TM_Building] SET [BuildingName] = @BuildingName,[BuildingDesc] = @BuildingDesc WHERE [LscID] = @LscID AND [BuildingID] = @BuildingID;";
         public const string SQL_SELECT_CSCMODIFY_DELBUILDING = @"DELETE FROM [dbo].[TM_Building] WHERE [LscID] = @LscID AND [BuildingID] = @BuildingID;";
+        public const string SQL_SELECT_CSCMODIFY_GETNETGRID = @"SELECT @LscID AS [LscID],[TypeID],[TypeName] FROM [dbo].[TC_NetGrid] WHERE [TypeID] = @TypeID;";
+        public const string SQL_SELECT_CSCMODIFY_ADDNETGRID = @"DELETE FROM [dbo].[TC_NetGrid] WHERE [LscID] = @LscID AND [TypeID] = @TypeID;INSERT INTO [dbo].[TC_NetGrid]([LscID],[TypeID],[TypeName]) VALUES(@LscID,@TypeID,@TypeName);";
+        public const string SQL_SELECT_CSCMODIFY_UPDATENETGRID = @"UPDATE [dbo].[TC_NetGrid] SET [TypeName] = @TypeName WHERE [LscID] = @LscID AND [TypeID] = @TypeID;";
+        public const string SQL_SELECT_CSCMODIFY_DELNETGRID = @"DELETE FROM [dbo].[TC_NetGrid] WHERE [LscID] = @LscID AND [TypeID] = @TypeID;";
         public const string SQL_SELECT_CSCMODIFY_GETSTA = @"SELECT @LscID AS [LscID],[StaID],[StaName],[StaDesc],[StaAddress],[LinkMan],[LinkManPhone],[StaTypeID],[LocationWay],[Longitude],[Latitude],[MapDesc],[STDStationID],[NodeFeatures],[AreaID],[DeptID],[MID],[DevCount],[StaPFACount],[NetGridID],[BuildingID],[Enabled] FROM [dbo].[TM_STA] WHERE [StaID] = @StaID;";
         public const string SQL_SELECT_CSCMODIFY_ADDSTA = @"DELETE FROM [dbo].[TM_STA] WHERE [LscID] = @LscID AND [StaID] = @StaID;INSERT INTO [dbo].[TM_STA]([LscID],[StaID],[StaName],[StaDesc],[StaAddress],[LinkMan],[LinkManPhone],[StaTypeID],[LocationWay],[Longitude],[Latitude],[MapDesc],[STDStationID],[NodeFeatures],[AreaID],[DeptID],[MID],[DevCount],[StaPFACount],[NetGridID],[BuildingID],[Enabled]) VALUES(@LscID,@StaID,@StaName,@StaDesc,@StaAddress,@LinkMan,@LinkManPhone,@StaTypeID,@LocationWay,@Longitude,@Latitude,@MapDesc,@STDStationID,@NodeFeatures,@AreaID,@DeptID,@MID,@DevCount,@StaPFACount,@NetGridID,@BuildingID,@Enabled);";
         public const string SQL_SELECT_CSCMODIFY_UPDATESTA = @"UPDATE [dbo].[TM_STA] SET [LscID]=@LscID,[StaID]=@StaID,[StaName]=@StaName,[StaDesc]=@StaDesc,[StaAddress]=@StaAddress,[LinkMan]=@LinkMan,[LinkManPhone]=@LinkManPhone,[StaTypeID]=@StaTypeID,[LocationWay]=@LocationWay,[Longitude]=@Longitude,[Latitude]=@Latitude,[MapDesc]=@MapDesc,[STDStationID]=@STDStationID,[NodeFeatures]=@NodeFeatures,[AreaID]=@AreaID,[DeptID]=@DeptID,[MID]=@MID,[DevCount]=@DevCount,[StaPFACount]=@StaPFACount,[NetGridID]=@NetGridID,[BuildingID]=@BuildingID,[Enabled]=@Enabled WHERE [LscID] = @LscID AND [StaID] = @StaID;";

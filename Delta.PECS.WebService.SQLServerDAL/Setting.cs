@@ -56,6 +56,27 @@ namespace Delta.PECS.WebService.SQLServerDAL {
         }
 
         /// <summary>
+        /// Sync NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="connectionString">connectionString</param>
+        public void SyncNetGrid(int lscId, string connectionString) {
+            try {
+                SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int) };
+                parms[0].Value = lscId;
+
+                SqlHelper.TestConnection(connectionString);
+                using (DataTable dt = SqlHelper.ExecuteTable(connectionString, CommandType.Text, SqlText.SQL_SELECT_SETTING_SYNCNETGRID, parms)) {
+                    if (dt != null && dt.Rows.Count > 0) {
+                        SqlHelper.ExecuteBulkCopy(SqlHelper.ConnectionStringLocalTransaction, SqlText.TN_NetGrid, dt);
+                    }
+                }
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Sync Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

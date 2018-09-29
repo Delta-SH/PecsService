@@ -42,6 +42,19 @@ namespace Delta.PECS.WebService.BLL
         }
 
         /// <summary>
+        /// Sync NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="connectionString">connectionString</param>
+        public void SyncNetGrid(int lscId, string connectionString) {
+            try {
+                settingDal.SyncNetGrid(lscId, connectionString);
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Sync Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

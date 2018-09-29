@@ -29,6 +29,14 @@ namespace Delta.PECS.WebService.OracleDAL
         }
 
         /// <summary>
+        /// Sync NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="connectionString">connectionString</param>
+        public void SyncNetGrid(int lscId, string connectionString) {
+        }
+
+        /// <summary>
         /// Sync Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

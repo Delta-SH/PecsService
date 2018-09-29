@@ -159,6 +159,48 @@ namespace Delta.PECS.WebService.BLL
         }
 
         /// <summary>
+        /// Add NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void AddNetGrid(int lscId, int id, string connectionString) {
+            try {
+                modifyDal.AddNetGrid(lscId, id, connectionString);
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Update NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void UpdateNetGrid(int lscId, int id, string connectionString) {
+            try {
+                modifyDal.UpdateNetGrid(lscId, id, connectionString);
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Delete NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void DelNetGrid(int lscId, int id, string connectionString) {
+            try {
+                modifyDal.DelNetGrid(lscId, id, connectionString);
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Add Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

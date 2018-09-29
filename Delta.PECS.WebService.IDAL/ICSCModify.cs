@@ -94,6 +94,30 @@ namespace Delta.PECS.WebService.IDAL
         void DelBuilding(int lscId, int id, string connectionString);
 
         /// <summary>
+        /// Add NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        void AddNetGrid(int lscId, int id, string connectionString);
+
+        /// <summary>
+        /// Update NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        void UpdateNetGrid(int lscId, int id, string connectionString);
+
+        /// <summary>
+        /// Delete NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        void DelNetGrid(int lscId, int id, string connectionString);
+
+        /// <summary>
         /// Add Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

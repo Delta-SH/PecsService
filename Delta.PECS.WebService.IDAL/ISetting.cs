@@ -26,6 +26,13 @@ namespace Delta.PECS.WebService.IDAL
         void SyncBuilding(int lscId, string connectionString);
 
         /// <summary>
+        /// Sync NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="connectionString">connectionString</param>
+        void SyncNetGrid(int lscId, string connectionString);
+
+        /// <summary>
         /// Sync Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>

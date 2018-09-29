@@ -109,6 +109,33 @@ namespace Delta.PECS.WebService.OracleDAL
         }
 
         /// <summary>
+        /// Add NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void AddNetGrid(int lscId, int id, string connectionString) {
+        }
+
+        /// <summary>
+        /// Update NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void UpdateNetGrid(int lscId, int id, string connectionString) {
+        }
+
+        /// <summary>
+        /// Delete NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void DelNetGrid(int lscId, int id, string connectionString) {
+        }
+
+        /// <summary>
         /// Add Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>
@@ -651,5 +678,7 @@ namespace Delta.PECS.WebService.OracleDAL
         /// <param name="lParams">lsc params</param>
         public void UpdateLscParam(List<LscParamInfo> lParams) {
         }
+
+        
     }
 }

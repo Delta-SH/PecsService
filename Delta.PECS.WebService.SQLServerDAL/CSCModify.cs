@@ -419,6 +419,128 @@ namespace Delta.PECS.WebService.SQLServerDAL {
         }
 
         /// <summary>
+        /// Add NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void AddNetGrid(int lscId, int id, string connectionString) {
+            try {
+                SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int),
+                                         new SqlParameter("@TypeID", SqlDbType.Int) };
+                parms[0].Value = lscId;
+                parms[1].Value = id;
+
+                SqlHelper.TestConnection(connectionString);
+                using (SqlDataReader rdr = SqlHelper.ExecuteReader(connectionString, CommandType.Text, SqlText.SQL_SELECT_CSCMODIFY_GETBUILDING, parms)) {
+                    while (rdr.Read()) {
+                        using (SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringLocalTransaction)) {
+                            conn.Open();
+                            SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+
+                            try {
+                                parms = new SqlParameter[] {new SqlParameter("@LscID", SqlDbType.Int),
+                                                            new SqlParameter("@TypeID", SqlDbType.Int),
+                                                            new SqlParameter("@TypeName", SqlDbType.VarChar,40)};
+
+                                parms[0].Value = rdr["LscID"];
+                                parms[1].Value = rdr["TypeID"];
+                                parms[2].Value = rdr["TypeName"];
+
+                                SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_CSCMODIFY_ADDNETGRID, parms);
+                                trans.Commit();
+                            } catch {
+                                trans.Rollback();
+                                throw;
+                            } finally {
+                                conn.Close();
+                            }
+                        }
+                    }
+                }
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Update NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void UpdateNetGrid(int lscId, int id, string connectionString) {
+            try {
+                SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int),
+                                         new SqlParameter("@TypeID", SqlDbType.Int) };
+                parms[0].Value = lscId;
+                parms[1].Value = id;
+
+                SqlHelper.TestConnection(connectionString);
+                using (SqlDataReader rdr = SqlHelper.ExecuteReader(connectionString, CommandType.Text, SqlText.SQL_SELECT_CSCMODIFY_GETBUILDING, parms)) {
+                    while (rdr.Read()) {
+                        using (SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringLocalTransaction)) {
+                            conn.Open();
+                            SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+
+                            try {
+                                parms = new SqlParameter[] {new SqlParameter("@LscID", SqlDbType.Int),
+                                                            new SqlParameter("@TypeID", SqlDbType.Int),
+                                                            new SqlParameter("@TypeName", SqlDbType.VarChar,40)};
+
+                                parms[0].Value = rdr["LscID"];
+                                parms[1].Value = rdr["TypeID"];
+                                parms[2].Value = rdr["TypeName"];
+
+                                SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_CSCMODIFY_UPDATENETGRID, parms);
+                                trans.Commit();
+                            } catch {
+                                trans.Rollback();
+                                throw;
+                            } finally {
+                                conn.Close();
+                            }
+                        }
+                    }
+                }
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Delete NetGrid Table
+        /// </summary>
+        /// <param name="lscId">lscId</param>
+        /// <param name="id">id</param>
+        /// <param name="connectionString">connectionString</param>
+        public void DelNetGrid(int lscId, int id, string connectionString) {
+            try {
+                using (SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringLocalTransaction)) {
+                    conn.Open();
+                    SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+
+                    try {
+                        SqlParameter[] parms = { new SqlParameter("@LscID", SqlDbType.Int),
+                                                 new SqlParameter("@TypeID", SqlDbType.Int) };
+                        parms[0].Value = lscId;
+                        parms[1].Value = id;
+
+                        SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_CSCMODIFY_DELNETGRID, parms);
+                        trans.Commit();
+                    } catch {
+                        trans.Rollback();
+                        throw;
+                    } finally {
+                        conn.Close();
+                    }
+                }
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Add Station Table
         /// </summary>
         /// <param name="lscId">lscId</param>
