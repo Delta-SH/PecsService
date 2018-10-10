@@ -265,6 +265,7 @@ namespace Delta.PECS.WebService.DataServer {
 
             settingEntity.PurgeArea();
             settingEntity.PurgeBuilding();
+            settingEntity.PurgeNetGrid();
             settingEntity.PurgeSta();
             settingEntity.PurgeDev();
             settingEntity.PurgeAI();

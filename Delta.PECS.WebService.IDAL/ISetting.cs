@@ -169,6 +169,11 @@ namespace Delta.PECS.WebService.IDAL
         void PurgeBuilding();
 
         /// <summary>
+        /// Purge NetGrid Table
+        /// </summary>
+        void PurgeNetGrid();
+
+        /// <summary>
         /// Purge Station Table
         /// </summary>
         void PurgeSta();

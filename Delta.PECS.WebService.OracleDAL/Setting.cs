@@ -193,6 +193,12 @@ namespace Delta.PECS.WebService.OracleDAL
         }
 
         /// <summary>
+        /// Purge NetGrid Table
+        /// </summary>
+        public void PurgeNetGrid() {
+        }
+
+        /// <summary>
         /// Purge Station Table
         /// </summary>
         public void PurgeSta() {

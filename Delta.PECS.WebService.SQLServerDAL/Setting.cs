@@ -503,6 +503,30 @@ namespace Delta.PECS.WebService.SQLServerDAL {
         }
 
         /// <summary>
+        /// Purge NetGrid Table
+        /// </summary>
+        public void PurgeNetGrid() {
+            try {
+                using (SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringLocalTransaction)) {
+                    conn.Open();
+                    SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+
+                    try {
+                        SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_DELETE_SETTING_PURGENETGRID, null);
+                        trans.Commit();
+                    } catch {
+                        trans.Rollback();
+                        throw;
+                    } finally {
+                        conn.Close();
+                    }
+                }
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Purge Station Table
         /// </summary>
         public void PurgeSta() {

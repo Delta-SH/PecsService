@@ -311,6 +311,17 @@ namespace Delta.PECS.WebService.BLL
         }
 
         /// <summary>
+        /// Purge NetGrid Table
+        /// </summary>
+        public void PurgeNetGrid() {
+            try {
+                settingDal.PurgeNetGrid();
+            } catch {
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Purge Station Table
         /// </summary>
         public void PurgeSta() {

@@ -172,6 +172,7 @@ namespace Delta.PECS.WebService.DBUtility
         public const string SQL_SELECT_SETTING_SYNCSUBDEVCAP = @"SELECT @LscID AS [LscID],[DevID],[BuildingID],[ModuleCount],[DevDesignCapacity],[SingleRatedCapacity],[TotalRatedCapacity],[RedundantCapacity] FROM [dbo].[TM_SubDevCap];";
         public const string SQL_DELETE_SETTING_PURGEAREA = @"TRUNCATE TABLE [dbo].[TM_AREA];";
         public const string SQL_DELETE_SETTING_PURGEBUILDING = @"TRUNCATE TABLE [dbo].[TM_Building];";
+        public const string SQL_DELETE_SETTING_PURGENETGRID = @"TRUNCATE TABLE [dbo].[TC_NetGrid];";
         public const string SQL_DELETE_SETTING_PURGESTA = @"TRUNCATE TABLE [dbo].[TM_STA];";
         public const string SQL_DELETE_SETTING_PURGEDEV = @"TRUNCATE TABLE [dbo].[TM_DEV];";
         public const string SQL_DELETE_SETTING_PURGEAI = @"TRUNCATE TABLE [dbo].[TM_AIC];";
