@@ -1399,6 +1399,10 @@ namespace Delta.PECS.WebService.DataService
         public static int GetDevID(int nodeId) {
             return (int)(nodeId & 0xFFFFF800);
         }
+
+        public static int GetStaID(int nodeId) {
+            return (int)(nodeId & 0xFFF80000);
+        }
         #endregion
     }
 }

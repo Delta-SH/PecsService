@@ -262,4 +262,15 @@ namespace Delta.PECS.WebService.Model
         TM_ProjBooking,
         TM_Building
     }
+
+    /// <summary>
+    /// Reservation Node Type
+    /// </summary>
+    public enum EnmResNode {
+        Lsc = 110,
+        Area = 120,
+        Station = 130,
+        Room = 140,
+        Device = 150
+    }
 }

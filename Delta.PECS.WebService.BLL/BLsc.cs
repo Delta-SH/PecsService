@@ -20,40 +20,50 @@ namespace Delta.PECS.WebService.BLL
         /// <summary>
         /// Method to get all lscs information
         /// </summary>
-        /// <returns>all lscs information</returns>
         public List<LscInfo> GetLscs() {
-            try {
-                return lscDal.GetLscs();
-            } catch {
-                throw;
-            }
+            return lscDal.GetLscs();
         }
 
         /// <summary>
         /// Method to get lsc information
         /// </summary>
-        /// <returns>lsc information</returns>
         public LscInfo GetLsc(int lscId) {
-            try {
-                return lscDal.GetLsc(lscId);
-            } catch {
-                throw;
-            }
+            return lscDal.GetLsc(lscId);
         }
 
         /// <summary>
-        /// Update the Lsc Attributes
+        /// Method to update the Lsc Attributes
         /// </summary>
-        /// <param name="lscId">lscId</param>
-        /// <param name="isConnected">isConnected</param>
-        /// <param name="changeTime">changeTime</param>
-        /// <returns>Affected rows</returns>
         public int UpdateAttributes(int lscId, bool isConnected, DateTime changeTime) {
-            try {
-                return lscDal.UpdateAttributes(lscId, isConnected, changeTime);
-            } catch {
-                throw;
-            }
+            return lscDal.UpdateAttributes(lscId, isConnected, changeTime);
+        }
+
+        /// <summary>
+        /// Method to get the reservation information
+        /// </summary>
+        public List<ReservationInfo> GetReservations() {
+            return lscDal.GetReservations();
+        }
+
+        /// <summary>
+        /// Method to get the reservation nodes information
+        /// </summary>
+        public List<NodeInReservationInfo> GetReservationNodes(string id) {
+            return lscDal.GetReservationNodes(id);
+        }
+
+        /// <summary>
+        /// Method to update the reservation status information
+        /// </summary>
+        public void UpdateSended(IEnumerable<string> ids, bool isSended = true) {
+            lscDal.UpdateReservations(ids, isSended);
+        }
+
+        /// <summary>
+        /// Method to add the reservation information
+        /// </summary>
+        public void AddReservations(string connectionString, List<BookingInfo> bookings) {
+            lscDal.AddReservations(connectionString, bookings);
         }
     }
 }

@@ -51,9 +51,20 @@ namespace Delta.PECS.WebService.DBUtility
         public const string SQL_SELECT_LSC_GETLSCS = @"SELECT [LscID],[LscName],[LscIP],[LscPort],[LscUID],[LscPwd],[BeatInterval],[BeatDelay],[DBServer],[DBPort],[DBUID],[DBPwd],[DBName],[HisDBServer],[HisDBPort],[HisDBUID],[HisDBPwd],[HisDBName],[Connected],[ChangedTime],[Enabled] FROM [dbo].[TM_LSC];";
         public const string SQL_SELECT_LSC_GETLSC = @"SELECT [LscID],[LscName],[LscIP],[LscPort],[LscUID],[LscPwd],[BeatInterval],[BeatDelay],[DBServer],[DBPort],[DBUID],[DBPwd],[DBName],[HisDBServer],[HisDBPort],[HisDBUID],[HisDBPwd],[HisDBName],[Connected],[ChangedTime],[Enabled] FROM [dbo].[TM_LSC] WHERE [LscID] = @LscID;";
         public const string SQL_SELECT_LSC_UPDATEATTRIBUTES = @"UPDATE [dbo].[TM_LSC] SET [Connected] = @Connected,[ChangedTime] = @ChangedTime WHERE [LscID] = @LscID;";
+
+        //Reservation SQL Text
+        public const string SQL_SELECT_LSC_GETRESERVATIONS = @"
+        SELECT R.[LscId],R.[Id],R.[Name],R.[StartTime],R.[EndTime],R.[Comment],R.[CreatedTime],P.[Id] AS [PId],P.[Name] AS [PName],P.[StartTime] AS [PStartTime],P.[EndTime] AS [PEndTime],P.[Responsible] AS [PResponsible],P.[ContactPhone] AS [PContactPhone],P.[Company] AS [PCompany],P.[Comment] AS [PComment],P.[CreatedTime] AS [PCreatedTime]
+        FROM [dbo].[M_Reservations] R INNER JOIN [dbo].[M_Projects] P ON R.[ProjectId]=P.[Id]
+        WHERE R.[Status] = 1 AND R.[IsSended] = 0;";
+        public const string SQL_SELECT_LSC_GETRESERVATIONODES = @"SELECT [ReservationId],[NodeId],[NodeType] FROM [dbo].[M_NodesInReservation] WHERE [ReservationId] = @ReservationId;";
+        public const string SQL_SELECT_LSC_DELETERESERVATION = @"DELETE FROM [dbo].[TM_ProjBooking] WHERE [ProjID]=@ProjID;";
+        public const string SQL_SELECT_LSC_ADDRESERVATION = @"INSERT INTO [dbo].[TM_ProjBooking]([BookingUserID],[ProjID],[ProjName],[ProjDesc],[LscIncluded],[StaIncluded],[DevIncluded],[StartTime],[EndTime],[ProjStatus],[IsComfirmed],[ComfirmedUserID],[ComfirmedTime],[IsChanged],[BookingTime]) VALUES(@BookingUserID,@ProjID,@ProjName,@ProjDesc,@LscIncluded,@StaIncluded,@DevIncluded,@StartTime,@EndTime,@ProjStatus,@IsComfirmed,@ComfirmedUserID,@ComfirmedTime,@IsChanged,@BookingTime);";
+        public const string SQL_SELECT_LSC_UPDATERESERVATION = @"UPDATE [dbo].[M_Reservations] SET [IsSended] = @IsSended WHERE [Id] = @Id;";
+
         //Alarm SQL Text
         public const string SQL_SELECT_ALARM_SYNALARMS = @"
-        ;WITH Nodes AS
+        ; WITH Nodes AS
         (
 	        SELECT AI.[AicID] AS [NodeID],@AIType AS [NodeType],DE.[DevID],DE.[DevDesc] FROM [dbo].[TM_AIC] AI INNER JOIN [dbo].[TM_DEV] DE ON AI.[DevID] = DE.[DevID]
 	        UNION ALL

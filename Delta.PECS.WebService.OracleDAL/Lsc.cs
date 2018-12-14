@@ -38,5 +38,19 @@ namespace Delta.PECS.WebService.OracleDAL
         public int UpdateAttributes(int lscId, bool isConnected, DateTime changeTime) {
             return 0;
         }
+
+        public List<ReservationInfo> GetReservations() {
+            return null;
+        }
+
+        public List<NodeInReservationInfo> GetReservationNodes(string id) {
+            return null;
+        }
+
+        public void UpdateReservations(IEnumerable<string> ids, bool isSended) {
+        }
+
+        public void AddReservations(string connectionString, List<BookingInfo> bookings) {
+        }
     }
 }

@@ -32,5 +32,25 @@ namespace Delta.PECS.WebService.IDAL
         /// <param name="changeTime">changeTime</param>
         /// <returns>Affected rows</returns>
         int UpdateAttributes(int lscId, bool isConnected, DateTime changeTime);
+
+        /// <summary>
+        /// Method to get all the reservations information
+        /// </summary>
+        List<ReservationInfo> GetReservations();
+
+        /// <summary>
+        /// Method to get all the reservation nodes information
+        /// </summary>
+        List<NodeInReservationInfo> GetReservationNodes(string id);
+
+        /// <summary>
+        /// Update the reservations
+        /// </summary>
+        void UpdateReservations(IEnumerable<string> ids, bool isSended);
+
+        /// <summary>
+        /// Method to add all the reservation information
+        /// </summary>
+        void AddReservations(string connectionString, List<BookingInfo> bookings);
     }
 }

@@ -22,11 +22,12 @@ namespace Delta.PECS.WebService.DataServer {
         private EnmRunState runState = EnmRunState.Stop;
         private DateTime StartupDateTime;
         private Guid UniqueID;
-        private Int64 SyncModifyInterval;
-        private Int64 SyncTimeInterval;
-        private Int64 SyncMachineCodeInterval;
-        private Int64 SyncLscParamInterval;
-        private Int64 MaxRepeatCount;
+        private long SyncModifyInterval;
+        private long SyncTimeInterval;
+        private long SyncMachineCodeInterval;
+        private long SyncLscParamInterval;
+        private long SyncLscReservationInterval;
+        private long MaxRepeatCount;
         private Thread workerThread;
         private static List<Thread> workerThreads;
         private static List<ClientObjectInfo> workerClients;
@@ -71,6 +72,8 @@ namespace Delta.PECS.WebService.DataServer {
                 SyncMachineCodeInterval = 300;
                 var paramInterval = ConfigurationManager.AppSettings["SyncLscParamInterval"];
                 SyncLscParamInterval = !String.IsNullOrEmpty(paramInterval) && ComUtility.IsNumeric(paramInterval) ? Int32.Parse(paramInterval) : 0;
+                var reserInterval = ConfigurationManager.AppSettings["SyncLscReservationInterval"];
+                SyncLscReservationInterval = !String.IsNullOrEmpty(reserInterval) && ComUtility.IsNumeric(reserInterval) ? Int32.Parse(reserInterval) : 0;
                 runState = EnmRunState.Start;
                 StartupDateTime = DateTime.Now;
                 UniqueID = Guid.NewGuid();
@@ -170,6 +173,15 @@ namespace Delta.PECS.WebService.DataServer {
                 workerThread.Start();
                 workerThreads.Add(workerThread);
                 WriteRealTimeLog(DateTime.Now, EnmLogType.Info, "System", "任务处理线程创建成功");
+
+                if (SyncLscReservationInterval > 0) {
+                    //创建线程处理工程预约
+                    workerThread = new Thread(new ThreadStart(DoReservations));
+                    workerThread.IsBackground = true;
+                    workerThread.Start();
+                    workerThreads.Add(workerThread);
+                    WriteRealTimeLog(DateTime.Now, EnmLogType.Info, "System", "工程预约处理线程创建成功");
+                }
 
                 //置标志位
                 runState = EnmRunState.Init;
@@ -2114,6 +2126,134 @@ namespace Delta.PECS.WebService.DataServer {
                 }
 
                 Thread.Sleep(1000);
+            }
+        }
+
+        /// <summary>
+        /// Do Reservations
+        /// </summary>
+        private void DoReservations() {
+            allDone.WaitOne();
+
+            if (SyncLscReservationInterval <= 0)
+                return;
+
+            var interval = 86400;
+            var lscReservation = new BLsc();
+            while (runState < EnmRunState.Stop) {
+                Thread.Sleep(1000);
+                if (runState == EnmRunState.Run) {
+                    if (interval++ <= SyncLscReservationInterval)
+                        continue;
+
+                    interval = 1;
+
+                    try {
+                        var reservations = lscReservation.GetReservations();
+                        if (reservations.Count == 0) continue;
+
+                        var bookings = new List<BookingInfo>();
+                        foreach(var reser in reservations) {
+                            if (reser.Nodes == null || reser.Nodes.Count == 0)
+                                continue;
+
+                            var booking = new BookingInfo { LscId = reser.LscId, Id = reser.Id, Projects = new List<ProjBookingInfo>() };
+                            if(reser.Nodes.Any(n=>n.NodeType == EnmResNode.Lsc)) {
+                                booking.Projects.Add(new ProjBookingInfo {
+                                    BookingUserID = 0,
+                                    ProjID = reser.Id,
+                                    ProjName = reser.Name,
+                                    ProjDesc = reser.Project.Name,
+                                    LscIncluded = reser.LscId,
+                                    StaIncluded = "",
+                                    DevIncluded = "",
+                                    StartTime = reser.StartTime,
+                                    EndTime = reser.EndTime,
+                                    ProjStatus = 1,
+                                    IsComfirmed = true,
+                                    ComfirmedUserID = 0,
+                                    ComfirmedTime = DateTime.Now,
+                                    IsChanged = true,
+                                    BookingTime = reser.CreatedTime
+                                });
+                            } else {
+                                var stations = new HashSet<string>(reser.Nodes.FindAll(n => n.NodeType == EnmResNode.Station).Select(n => n.NodeId));
+                                if (stations.Count > 0) {
+                                    booking.Projects.Add(new ProjBookingInfo {
+                                        BookingUserID = 0,
+                                        ProjID = reser.Id,
+                                        ProjName = reser.Name,
+                                        ProjDesc = reser.Project.Name,
+                                        LscIncluded = 0,
+                                        StaIncluded = string.Join(";", stations.ToArray()),
+                                        DevIncluded = "",
+                                        StartTime = reser.StartTime,
+                                        EndTime = reser.EndTime,
+                                        ProjStatus = 1,
+                                        IsComfirmed = true,
+                                        ComfirmedUserID = 0,
+                                        ComfirmedTime = DateTime.Now,
+                                        IsChanged = true,
+                                        BookingTime = reser.CreatedTime
+                                    });
+                                }
+
+                                var devices = reser.Nodes.FindAll(n => n.NodeType == EnmResNode.Device);
+                                if (devices.Count > 0) {
+                                    if (stations.Count > 0) {
+                                        devices = devices.FindAll(d => !stations.Contains(ComUtility.GetStaID(int.Parse(d.NodeId)).ToString()));
+                                    }
+
+                                    if (devices.Count > 0) {
+                                        booking.Projects.Add(new ProjBookingInfo {
+                                            BookingUserID = 0,
+                                            ProjID = reser.Id,
+                                            ProjName = reser.Name,
+                                            ProjDesc = reser.Project.Name,
+                                            LscIncluded = 0,
+                                            StaIncluded = "",
+                                            DevIncluded = string.Join(";", devices.Select(d => d.NodeId).ToArray()),
+                                            StartTime = reser.StartTime,
+                                            EndTime = reser.EndTime,
+                                            ProjStatus = 1,
+                                            IsComfirmed = true,
+                                            ComfirmedUserID = 0,
+                                            ComfirmedTime = DateTime.Now,
+                                            IsChanged = true,
+                                            BookingTime = reser.CreatedTime
+                                        });
+                                    }
+                                }
+                            }
+
+                            if (booking.Projects.Count > 0)
+                                bookings.Add(booking);
+                        }
+
+                        if(bookings.Count > 0) {
+                            var lscEntities = new List<LscInfo>();
+                            lock (totalLscs) { lscEntities.AddRange(totalLscs); }
+                            foreach(var lg in bookings.GroupBy(b => b.LscId)) {
+                                try {
+                                    var _lsc = lscEntities.Find(l => l.LscID == lg.Key);
+                                    if (_lsc == null) continue;
+
+                                    var data = lg.ToList();
+                                    lscReservation.AddReservations(ComUtility.CreateLscConnectionString(_lsc), data);
+                                    WriteLog(DateTime.Now, EnmLogType.Info, "System", String.Format("工程预约下发完成(Lsc:{0}-{1}, Count:{2})", _lsc.LscID, _lsc.LscName, data.Count));
+                                } catch (Exception err) {
+                                    WriteLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoReservations-02]{0}", err.Message));
+                                }
+                            }
+                        }
+
+                        if(reservations.Count > 0) {
+                            lscReservation.UpdateSended(reservations.Select(r => r.Id));
+                        }
+                    } catch (Exception err) {
+                        WriteLog(DateTime.Now, EnmLogType.Error, "System", String.Format("[DoReservations-01]{0}", err.Message));
+                    }
+                }
             }
         }
 

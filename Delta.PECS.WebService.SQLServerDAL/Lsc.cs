@@ -142,5 +142,158 @@ namespace Delta.PECS.WebService.SQLServerDAL
                 throw;
             }
         }
+
+        /// <summary>
+        /// Method to get all the reservations information
+        /// </summary>
+        public List<ReservationInfo> GetReservations() {
+            var entities = new List<ReservationInfo>();
+            using (var rdr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringLocalTransaction, CommandType.Text, SqlText.SQL_SELECT_LSC_GETRESERVATIONS, null)) {
+                while (rdr.Read()) {
+                    var entity = new ReservationInfo {
+                        LscId = ComUtility.DBNullInt32Handler(rdr["LscId"]),
+                        Id = ComUtility.DBNullStringHandler(rdr["Id"]),
+                        Name = ComUtility.DBNullStringHandler(rdr["Name"]),
+                        StartTime = ComUtility.DBNullDateTimeHandler(rdr["StartTime"]),
+                        EndTime = ComUtility.DBNullDateTimeHandler(rdr["EndTime"]),
+                        Comment = ComUtility.DBNullStringHandler(rdr["Comment"]),
+                        CreatedTime = ComUtility.DBNullDateTimeHandler(rdr["CreatedTime"]),
+                        Project = new ProjectInfo {
+                            Id = ComUtility.DBNullStringHandler(rdr["PId"]),
+                            Name = ComUtility.DBNullStringHandler(rdr["PName"]),
+                            StartTime = ComUtility.DBNullDateTimeHandler(rdr["PStartTime"]),
+                            EndTime = ComUtility.DBNullDateTimeHandler(rdr["PEndTime"]),
+                            Responsible = ComUtility.DBNullStringHandler(rdr["PResponsible"]),
+                            ContactPhone = ComUtility.DBNullStringHandler(rdr["PContactPhone"]),
+                            Company = ComUtility.DBNullStringHandler(rdr["PCompany"]),
+                            Comment = ComUtility.DBNullStringHandler(rdr["PComment"]),
+                            CreatedTime = ComUtility.DBNullDateTimeHandler(rdr["PCreatedTime"])
+                        }
+                    };
+
+                    entities.Add(entity);
+                }
+            }
+
+            foreach (var entity in entities) {
+                entity.Nodes = GetReservationNodes(entity.Id);
+            }
+
+            return entities;
+        }
+
+        /// <summary>
+        /// Method to get all the reservation nodes information
+        /// </summary>
+        public List<NodeInReservationInfo> GetReservationNodes(string id) {
+            SqlParameter[] parms = { new SqlParameter("@ReservationId", SqlDbType.VarChar, 100) };
+            parms[0].Value = id;
+
+            var entities = new List<NodeInReservationInfo>();
+            using (var rdr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringLocalTransaction, CommandType.Text, SqlText.SQL_SELECT_LSC_GETRESERVATIONODES, parms)) {
+                while (rdr.Read()) {
+                    var entity = new NodeInReservationInfo {
+                        ReservationId = ComUtility.DBNullStringHandler(rdr["ReservationId"]),
+                        NodeId = ComUtility.DBNullStringHandler(rdr["NodeId"]),
+                        NodeType = ComUtility.DBNullResNodeHandler(rdr["NodeType"])
+                    };
+
+                    entities.Add(entity);
+                }
+            }
+
+            return entities;
+        }
+
+        /// <summary>
+        /// Update the reservations
+        /// </summary>
+        public void UpdateReservations(IEnumerable<string> ids, bool isSended) {
+            using (SqlConnection conn = new SqlConnection(SqlHelper.ConnectionStringLocalTransaction)) {
+                conn.Open();
+                SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+
+                try {
+                    SqlParameter[] parms = { new SqlParameter("@Id", SqlDbType.VarChar, 100),
+                                             new SqlParameter("@IsSended", SqlDbType.Bit)};
+
+                    foreach(var id in ids) {
+                        parms[0].Value = ComUtility.DBNullString2Checker(id);
+                        parms[1].Value = isSended;
+
+                        SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_LSC_UPDATERESERVATION, parms);
+                    }
+                    trans.Commit();
+                } catch {
+                    trans.Rollback();
+                    throw;
+                } finally {
+                    conn.Close();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method to add all the reservation information
+        /// </summary>
+        public void AddReservations(string connectionString, List<BookingInfo> bookings) {
+            SqlParameter[] parms1 = { new SqlParameter("@LscID", SqlDbType.Int),
+                                      new SqlParameter("@ProjID", SqlDbType.VarChar, 50)};
+            SqlParameter[] parms2 = { new SqlParameter("@BookingUserID", SqlDbType.Int),
+                                      new SqlParameter("@ProjID", SqlDbType.VarChar, 50),
+                                      new SqlParameter("@ProjName", SqlDbType.VarChar, 100),
+                                      new SqlParameter("@ProjDesc", SqlDbType.VarChar, 200),
+                                      new SqlParameter("@LscIncluded", SqlDbType.Int),
+                                      new SqlParameter("@StaIncluded", SqlDbType.VarChar),
+                                      new SqlParameter("@DevIncluded", SqlDbType.VarChar),
+                                      new SqlParameter("@StartTime", SqlDbType.DateTime),
+                                      new SqlParameter("@EndTime", SqlDbType.DateTime),
+                                      new SqlParameter("@ProjStatus", SqlDbType.Int),
+                                      new SqlParameter("@IsComfirmed", SqlDbType.Bit),
+                                      new SqlParameter("@ComfirmedUserID", SqlDbType.Int),
+                                      new SqlParameter("@ComfirmedTime", SqlDbType.DateTime),
+                                      new SqlParameter("@IsChanged", SqlDbType.Bit),
+                                      new SqlParameter("@BookingTime", SqlDbType.DateTime)};
+
+            SqlHelper.TestConnection(connectionString);
+            using (var conn = new SqlConnection(connectionString)) {
+                if (conn.State != ConnectionState.Open)
+                    conn.Open();
+
+                var trans = conn.BeginTransaction(IsolationLevel.ReadCommitted);
+                try {
+                    foreach(var booking in bookings) {
+                        parms1[0].Value = ComUtility.DBNullInt32Checker(booking.LscId);
+                        parms1[1].Value = ComUtility.DBNullString2Checker(booking.Id);
+                        SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_LSC_DELETERESERVATION, parms1);
+
+                        foreach(var project in booking.Projects) {
+                            parms2[0].Value = ComUtility.DBNullInt32Checker(project.BookingUserID);
+                            parms2[1].Value = ComUtility.DBNullString2Checker(project.ProjID);
+                            parms2[2].Value = ComUtility.DBNullString2Checker(project.ProjName);
+                            parms2[3].Value = ComUtility.DBNullString2Checker(project.ProjDesc);
+                            parms2[4].Value = ComUtility.DBNullInt32Checker(project.LscIncluded);
+                            parms2[5].Value = ComUtility.DBNullString2Checker(project.StaIncluded);
+                            parms2[6].Value = ComUtility.DBNullString2Checker(project.DevIncluded);
+                            parms2[7].Value = ComUtility.DBNullDateTimeChecker(project.StartTime);
+                            parms2[8].Value = ComUtility.DBNullDateTimeChecker(project.EndTime);
+                            parms2[9].Value = ComUtility.DBNullInt32Checker(project.ProjStatus);
+                            parms2[10].Value = project.IsComfirmed;
+                            parms2[11].Value = ComUtility.DBNullInt32Checker(project.ComfirmedUserID);
+                            parms2[12].Value = ComUtility.DBNullDateTimeChecker(project.ComfirmedTime);
+                            parms2[13].Value = project.IsChanged;
+                            parms2[14].Value = ComUtility.DBNullDateTimeChecker(project.BookingTime);
+
+                            SqlHelper.ExecuteNonQuery(trans, CommandType.Text, SqlText.SQL_SELECT_LSC_ADDRESERVATION, parms2);
+                        }
+                    }
+
+                    trans.Commit();
+                } catch {
+                    trans.Rollback();
+                    throw;
+                }
+            }
+        }
     }
 }

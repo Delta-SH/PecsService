@@ -65,6 +65,17 @@ namespace Delta.PECS.WebService.SQLServerDAL
         }
 
         /// <summary>
+        /// DBNull String Checker
+        /// </summary>
+        /// <param name="val">val</param>
+        public static object DBNullString2Checker(string val) {
+            if (val == null)
+                return DBNull.Value;
+
+            return val;
+        }
+
+        /// <summary>
         /// DBNull Int32 Handler
         /// </summary>
         /// <param name="val">val</param>
@@ -270,6 +281,19 @@ namespace Delta.PECS.WebService.SQLServerDAL
 
             var tableID = Convert.ToInt32(val);
             return Enum.IsDefined(typeof(EnmTableID), tableID) ? (EnmTableID)tableID : EnmTableID.Null;
+        }
+
+        /// <summary>
+        /// DBNull ResNode Handler
+        /// </summary>
+        /// <param name="val">val</param>
+        /// <returns>value</returns>
+        public static EnmResNode DBNullResNodeHandler(object val) {
+            if (val == DBNull.Value)
+                return EnmResNode.Device;
+
+            var _v = Convert.ToInt32(val);
+            return Enum.IsDefined(typeof(EnmResNode), _v) ? (EnmResNode)_v : EnmResNode.Device;
         }
     }
 }
